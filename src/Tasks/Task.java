@@ -1,4 +1,6 @@
 package Tasks;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +14,11 @@ public class Task implements Comparable {
     private String description;
     final private LocalDateTime date;
 
-    public Task(String title, String description, int year, int month, int day, int hours, int mins) {
+    public Task(String title, String description, LocalDateTime date) {
 
         this.title = title;
         this.description = description;
-        this.date = LocalDateTime.of(year, month, day, hours, mins);
+        this.date = date;
         this.id = count++;
     }
     public long getId() {
@@ -42,6 +44,9 @@ public class Task implements Comparable {
     public LocalDateTime getDate() {
         return date;
     }
+    public boolean isTaskactiveAt(LocalDate date) {
+        return true;
+    }
 
     @Override
     public String toString() {
@@ -61,4 +66,6 @@ public class Task implements Comparable {
     public int compareTo(Object o) {
         return 0;
     }
+
+
 }

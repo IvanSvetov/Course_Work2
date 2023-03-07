@@ -1,15 +1,16 @@
 package Tasks;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class YearlyTask extends Task implements Repeatable {
+public class YearlyTask extends Task {
 
-    public YearlyTask(String title, String description, int year, int month, int day, int hours, int mins) {
-        super(title, description, year, month, day, hours, mins);
+    public YearlyTask(String title, String description, LocalDateTime date) {
+        super(title, description, date);
     }
 
     @Override
-    public boolean checkOccurance(LocalDateTime requestDate) {
-        return getDate().getDayOfYear() == (requestDate.getDayOfYear());
+    public boolean isTaskactiveAt(LocalDate date) {
+        return date.isEqual(getDate().toLocalDate().withYear(date.getYear()));
     }
 }

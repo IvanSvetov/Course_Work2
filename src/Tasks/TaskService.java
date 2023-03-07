@@ -1,6 +1,11 @@
 package Tasks;
+
+import Exeptions.IncorrectArgumentExeption;
 import Exeptions.TaskNotFoundExeption;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
@@ -16,6 +21,7 @@ public class TaskService {
         System.out.println("2 - Print all tasks ");
         System.out.println("3 - Find task by ID ");
         System.out.println("4 - Remove task by ID ");
+        System.out.println("5 - Find task by Date ");
         System.out.println("0 - Exit ");
     }
 
@@ -34,48 +40,49 @@ public class TaskService {
         System.out.println("5 - Yearly task");
     }
     public static void addTask() {
-        taskFrequency();
+        try {
+            LocalDateTime date = LocalDateTime.of(checkMinMax("Input year: YYYY", 2023, 2123),
+                    checkMinMax("Input month: MM",1,12),
+                    checkMinMax("Input day: dd", 1, 31), checkMinMax("Input hours: HH", 0, 23),
+                    checkMinMax("Input minutes: mm", 0, 59));
+            if (date.isBefore(LocalDateTime.now())) {
+                throw new IncorrectArgumentExeption("Cant create date in past");
+            }
+            taskFrequency();
         switch ((checkMinMax(" ", 1, 5))) {
             case 1:
-                OneTimeTask oneTimeTask = new OneTimeTask(verifyTitle("Input title"), verifyTitle("Input description"),
-                        checkMinMax("Input year: YYYY", 2023, 2123),
-                        checkMinMax("Input month: MM", 1, 12),
-                        checkMinMax("Input day: dd", 1, 31), checkMinMax("Input hours: HH", 0, 23), checkMinMax("Input minutes: mm", 0, 59));
+
+                OneTimeTask oneTimeTask = new OneTimeTask(verifyTitle("Input title"), verifyTitle("Input description"), date);
                 taskList.add(oneTimeTask);
                 System.out.println("Onetime task added:" + oneTimeTask);
                 break;
             case 2:
                 DailyTask dailyTask = new DailyTask(verifyTitle("Input title"), verifyTitle("Input description"),
-                        checkMinMax("Input year: YYYY", 2023, 2123),
-                        checkMinMax("Input month: MM", 1, 12),
-                        checkMinMax("Input day: dd", 1, 31), checkMinMax("Input hours: HH", 0, 23), checkMinMax("Input minutes: mm", 0, 59));
+                       date);
                 taskList.add(dailyTask);
                 System.out.println("Daily task added" + dailyTask);
                 break;
             case 3:
                 WeeklyTask weeklyTask = new WeeklyTask(verifyTitle("Input title"), verifyTitle("Input description"),
-                        checkMinMax("Input year: YYYY", 2023, 2123),
-                        checkMinMax("Input month: MM", 1, 12),
-                        checkMinMax("Input day: dd", 1, 31), checkMinMax("Input hours: HH", 0, 23), checkMinMax("Input minutes: mm", 0, 59));
+                        date);
                 taskList.add(weeklyTask);
                 System.out.println("Weekly task added" + weeklyTask);
                 break;
             case 4:
                 MonthlyTask monthlyTask = new MonthlyTask(verifyTitle("Input title"), verifyTitle("Input description"),
-                        checkMinMax("Input year: YYYY", 2023, 2123),
-                        checkMinMax("Input month: MM", 1, 12),
-                        checkMinMax("Input day: dd", 1, 31), checkMinMax("Input hours: HH", 0, 23), checkMinMax("Input minutes: mm", 0, 59));
+                       date);
                 taskList.add(monthlyTask);
                 System.out.println("Monthly task added" + monthlyTask);
                 break;
             case 5:
                 YearlyTask yearlyTask = new YearlyTask(verifyTitle("Input title"), verifyTitle("Input description"),
-                        checkMinMax("Input year: YYYY", 2023, 2123),
-                        checkMinMax("Input month: MM", 1, 12),
-                        checkMinMax("Input day: dd", 1, 31), checkMinMax("Input hours: HH", 0, 23), checkMinMax("Input minutes: mm", 0, 59));
+                       date);
                 taskList.add(yearlyTask);
                 System.out.println("Onetime task added" + yearlyTask);
                 break;
+        }
+        } catch (IncorrectArgumentExeption| DateTimeException e) {
+            System.out.println(e.getMessage());
         }
     }
     public static void printAllTasks(List<Task> taskList) {
@@ -125,6 +132,9 @@ public class TaskService {
         if (scanner.nextLine() == null)
             System.out.println("Incorrect");
         return scanner.next();
+    }
+    public static void printTaskByDate(LocalDate date){
+        taskList.stream().filter(x -> x.isTaskactiveAt(date)).forEach(System.out::println);
     }
 }
 
